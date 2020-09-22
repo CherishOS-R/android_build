@@ -299,10 +299,7 @@ FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(SCAN_EXCLUDE_DIRS) .repo .git)
 # General entries for project pathmap.  Any entries listed here should
 # be device and hardware independent.
 $(call project-set-path-variant,ril,TARGET_RIL_VARIANT,hardware/ril)
-
-ifneq ($(CHERISH_BUILD),)
 include vendor/cherish/config/BoardConfigCherish.mk
-endif
 
 
 # The build system exposes several variables for where to find the kernel
@@ -578,7 +575,6 @@ DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
 FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
-MAKE_PREBUILT := $(prebuilt_build_tools_bin)/make
 XMLLINT := $(SOONG_HOST_OUT_EXECUTABLES)/xmllint
 
 # SOONG_ZIP is exported by Soong, but needs to be defined early for
@@ -1246,7 +1242,6 @@ include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
-ifneq ($(CHERISH_BUILD),)
 ## We need to be sure the global selinux policies are included
 ## last, to avoid accidental resetting by device configs
 # $(eval include device/cherish/sepolicy/common/sepolicy.mk)
@@ -1257,9 +1252,11 @@ ifneq ($(CHERISH_BUILD),)
 # Include any vendor specific apicheck.mk file
 -include $(TOPDIR)vendor/*/build/core/apicheck.mk
 
+# Rules for QCOM targets
+-include $(TOPDIR)vendor/*/build/core/qcom_target.mk
+
 # Rules for MTK targets
 -include $(TOPDIR)vendor/*/build/core/mtk_target.mk
-endif
 
 -include external/linux-kselftest/android/kselftest_test_list.mk
 -include external/ltp/android/ltp_package_list.mk
